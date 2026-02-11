@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>True Colors Companion App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        @media print {
+            body { -webkit-print-color-adjust: exact; }
+            .page-break { page-break-inside: avoid; }
+            #ai-assistant-section { display: none; }
+            .ai-action-btn { display: none; }
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #16a34a, #ea580c, #2563eb, #ca8a04);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #3b82f6;
+            width: 20px;
+            height: 20px;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .chat-bubble {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+        .chat-user {
+            background-color: #3b82f6;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+        .chat-ai {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            border: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">True Colors Reference & Tools</h1>
+            <p class="text-gray-600 text-lg">Understanding Personality Traits, Needs, and Values</p>
+        </div>
+
+        <!-- Reference Grid Container -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+
+            <!-- GREEN Section -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border-t-8 border-green-600 page-break flex flex-col h-full">
+                <div class="bg-green-50 p-4 border-b border-green-100">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-green-800">GREEN</h2>
+                        <i class="fas fa-brain text-green-600 text-3xl"></i>
+                    </div>
+                    <p class="text-green-700 italic">The Conceptual Thinker: Logical, Analytical, Innovative</p>
+                </div>
+                <div class="p-6 space-y-4 flex-grow">
+                    <div>
+                        <h3 class="font-bold text-gray-800 border-b-2 border-green-200 mb-2">Core Needs</h3>
+                        <ul class="list-disc list-inside text-gray-700 text-sm space-y-1">
+                            <li>Intellectual stimulation & challenges</li>
+                            <li>Autonomy & creative freedom</li>
+                            <li>Time to ponder & question</li>
+                            <li>Privacy & information</li>
+                            <li>Competency & innovation</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded text-sm border-l-4 border-green-500">
+                        <span class="font-bold text-green-700">How to Interact:</span> Be rational, precise, objective. Validate their ideas.
+                    </div>
+                    
+                    <!-- AI Insight Panel -->
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <div class="flex gap-2 mb-2">
+                            <button type="button" onclick="getCardInsight(this, 'Green', 'Stressors')" class="ai-action-btn flex-1 bg-green-100 hover:bg-green-200 text-green-800 text-xs font-bold py-2 px-2 rounded transition">
+                                ✨ Stressors
+                            </button>
+                            <button type="button" onclick="getCardInsight(this, 'Green', 'Motivators')" class="ai-action-btn flex-1 bg-green-100 hover:bg-green-200 text-green-800 text-xs font-bold py-2 px-2 rounded transition">
+                                ✨ Motivators
+                            </button>
+                        </div>
+                        <div id="Green-insight" class="text-sm text-gray-600 hidden bg-green-50 p-2 rounded"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ORANGE Section -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border-t-8 border-orange-500 page-break flex flex-col h-full">
+                <div class="bg-orange-50 p-4 border-b border-orange-100">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-orange-700">ORANGE</h2>
+                        <i class="fas fa-bolt text-orange-500 text-3xl"></i>
+                    </div>
+                    <p class="text-orange-800 italic">The Dynamic Doer: Spontaneous, Energetic, Action-Oriented</p>
+                </div>
+                <div class="p-6 space-y-4 flex-grow">
+                    <div>
+                        <h3 class="font-bold text-gray-800 border-b-2 border-orange-200 mb-2">Core Needs</h3>
+                        <ul class="list-disc list-inside text-gray-700 text-sm space-y-1">
+                            <li>Freedom & flexibility</li>
+                            <li>Immediate results (expediency)</li>
+                            <li>Recognition for skillfulness</li>
+                            <li>Variety & physical activity</li>
+                            <li>To be given options</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded text-sm border-l-4 border-orange-500">
+                        <span class="font-bold text-orange-700">How to Interact:</span> Be direct, confident, entertaining. Avoid routine.
+                    </div>
+
+                    <!-- AI Insight Panel -->
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <div class="flex gap-2 mb-2">
+                            <button type="button" onclick="getCardInsight(this, 'Orange', 'Stressors')" class="ai-action-btn flex-1 bg-orange-100 hover:bg-orange-200 text-orange-800 text-xs font-bold py-2 px-2 rounded transition">
+                                ✨ Stressors
+                            </button>
+                            <button type="button" onclick="getCardInsight(this, 'Orange', 'Motivators')" class="ai-action-btn flex-1 bg-orange-100 hover:bg-orange-200 text-orange-800 text-xs font-bold py-2 px-2 rounded transition">
+                                ✨ Motivators
+                            </button>
+                        </div>
+                        <div id="Orange-insight" class="text-sm text-gray-600 hidden bg-orange-50 p-2 rounded"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLUE Section -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border-t-8 border-blue-500 page-break flex flex-col h-full">
+                <div class="bg-blue-50 p-4 border-b border-blue-100">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-blue-800">BLUE</h2>
+                        <i class="fas fa-heart text-blue-500 text-3xl"></i>
+                    </div>
+                    <p class="text-blue-700 italic">The Compassionate Connector: Empathetic, Sincere, Authentic</p>
+                </div>
+                <div class="p-6 space-y-4 flex-grow">
+                    <div>
+                        <h3 class="font-bold text-gray-800 border-b-2 border-blue-200 mb-2">Core Needs</h3>
+                        <ul class="list-disc list-inside text-gray-700 text-sm space-y-1">
+                            <li>Acceptance & validation</li>
+                            <li>Harmony & empathy</li>
+                            <li>Self-expression</li>
+                            <li>Authentic connection</li>
+                            <li>To contribute & be understood</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded text-sm border-l-4 border-blue-500">
+                        <span class="font-bold text-blue-700">How to Interact:</span> Be caring, open, nice. Focus on the human element.
+                    </div>
+
+                    <!-- AI Insight Panel -->
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <div class="flex gap-2 mb-2">
+                            <button type="button" onclick="getCardInsight(this, 'Blue', 'Stressors')" class="ai-action-btn flex-1 bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs font-bold py-2 px-2 rounded transition">
+                                ✨ Stressors
+                            </button>
+                            <button type="button" onclick="getCardInsight(this, 'Blue', 'Motivators')" class="ai-action-btn flex-1 bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs font-bold py-2 px-2 rounded transition">
+                                ✨ Motivators
+                            </button>
+                        </div>
+                        <div id="Blue-insight" class="text-sm text-gray-600 hidden bg-blue-50 p-2 rounded"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GOLD Section -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border-t-8 border-yellow-500 page-break flex flex-col h-full">
+                <div class="bg-yellow-50 p-4 border-b border-yellow-100">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-yellow-700">GOLD</h2>
+                        <i class="fas fa-clipboard-check text-yellow-600 text-3xl"></i>
+                    </div>
+                    <p class="text-yellow-800 italic">The Responsible Organizer: Dependable, Structured, Traditional</p>
+                </div>
+                <div class="p-6 space-y-4 flex-grow">
+                    <div>
+                        <h3 class="font-bold text-gray-800 border-b-2 border-yellow-200 mb-2">Core Needs</h3>
+                        <ul class="list-disc list-inside text-gray-700 text-sm space-y-1">
+                            <li>Consistency & reliability</li>
+                            <li>Clear expectations & rules</li>
+                            <li>Structure & organization</li>
+                            <li>Responsibility & closure</li>
+                            <li>Respect for time</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded text-sm border-l-4 border-yellow-500">
+                        <span class="font-bold text-yellow-700">How to Interact:</span> Be accurate, thorough, consistent. Respect traditions.
+                    </div>
+
+                    <!-- AI Insight Panel -->
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <div class="flex gap-2 mb-2">
+                            <button type="button" onclick="getCardInsight(this, 'Gold', 'Stressors')" class="ai-action-btn flex-1 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 text-xs font-bold py-2 px-2 rounded transition">
+                                ✨ Stressors
+                            </button>
+                            <button type="button" onclick="getCardInsight(this, 'Gold', 'Motivators')" class="ai-action-btn flex-1 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 text-xs font-bold py-2 px-2 rounded transition">
+                                ✨ Motivators
+                            </button>
+                        </div>
+                        <div id="Gold-insight" class="text-sm text-gray-600 hidden bg-yellow-50 p-2 rounded"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- AI Assistant Section -->
+        <div id="ai-assistant-section" class="mt-16 border-t pt-10">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">✨ AI Personality Assistant</h2>
+                <p class="text-gray-600">Apply True Colors to your real life interactions using Gemini AI.</p>
+                <p id="apiKeyStatus" onclick="showApiKeyPrompt()" class="text-sm text-red-600 font-medium cursor-pointer hover:underline mt-2">API Key: Not Set — Click to Add</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- Tool 1: Color Communicator -->
+                <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-purple-500"></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-comments mr-2 text-purple-500"></i> Color Communicator
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-4">Draft a message, and I'll rewrite it to appeal specifically to the values of your target audience.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Target Audience Color</label>
+                            <select id="targetColor" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none">
+                                <option value="Green">Green (Logic & Competence)</option>
+                                <option value="Orange">Orange (Action & Impact)</option>
+                                <option value="Blue">Blue (Empathy & Connection)</option>
+                                <option value="Gold">Gold (Structure & Duty)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Your Draft Message</label>
+                            <textarea id="messageInput" rows="4" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none" placeholder="e.g., We need to finish this project by Friday. Please follow the guidelines."></textarea>
+                        </div>
+                        <button type="button" onclick="rewriteMessage(this)" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 flex justify-center items-center gap-2">
+                            <span>Refine Message</span> <span class="text-xl">✨</span>
+                        </button>
+                    </div>
+
+                    <!-- Result Area -->
+                    <div id="communicatorResult" class="mt-4 hidden">
+                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">AI Suggestion:</h4>
+                            <div id="communicatorOutput" class="text-gray-800 prose prose-sm max-w-none"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool 2: Conflict Resolver -->
+                <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-orange-400 to-red-500"></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-handshake mr-2 text-orange-500"></i> Conflict Resolver
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-4">Describe a conflict or situation, and I'll suggest a resolution strategy based on personality differences.</p>
+
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">My Color</label>
+                                <select id="myColor" class="w-full p-2 border border-gray-300 rounded-lg outline-none">
+                                    <option value="Green">Green</option>
+                                    <option value="Orange">Orange</option>
+                                    <option value="Blue">Blue</option>
+                                    <option value="Gold">Gold</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Their Color</label>
+                                <select id="theirColor" class="w-full p-2 border border-gray-300 rounded-lg outline-none">
+                                    <option value="Green">Green</option>
+                                    <option value="Orange" selected>Orange</option>
+                                    <option value="Blue">Blue</option>
+                                    <option value="Gold">Gold</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">The Situation</label>
+                            <textarea id="situationInput" rows="3" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="e.g., I want to plan every detail of our vacation, but they want to just drive and see where we end up."></textarea>
+                        </div>
+                        <button type="button" onclick="resolveConflict(this)" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 flex justify-center items-center gap-2">
+                            <span>Get Advice</span> <span class="text-xl">✨</span>
+                        </button>
+                    </div>
+
+                    <!-- Result Area -->
+                    <div id="resolverResult" class="mt-4 hidden">
+                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Resolution Strategy:</h4>
+                            <div id="resolverOutput" class="text-gray-800 prose prose-sm max-w-none"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool 3: What's My Color? -->
+                <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-search mr-2 text-indigo-500"></i> What's My Color?
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-4">Briefly describe your ideal weekend or your work style, and I'll analyze which color fits you best.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Your Description</label>
+                            <textarea id="bioInput" rows="4" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g., I love organizing my closet on weekends, and I always arrive 5 minutes early to meetings..."></textarea>
+                        </div>
+                        <button type="button" onclick="analyzePersonality(this)" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 flex justify-center items-center gap-2">
+                            <span>Analyze Me</span> <span class="text-xl">✨</span>
+                        </button>
+                    </div>
+
+                    <!-- Result Area -->
+                    <div id="analysisResult" class="mt-4 hidden">
+                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Analysis:</h4>
+                            <div id="analysisOutput" class="text-gray-800 prose prose-sm max-w-none"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool 4: Team Synergy Analyzer -->
+                <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-teal-400 to-emerald-500"></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-users mr-2 text-teal-500"></i> Team Synergy Analyzer
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-4">Enter the number of people of each color in your team to get a dynamic report on strengths and blind spots.</p>
+
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-4 gap-2 text-center">
+                            <div>
+                                <label class="block text-xs font-bold text-green-700 mb-1">Green</label>
+                                <input type="number" id="teamGreen" value="0" min="0" class="w-full p-2 border border-gray-300 rounded-lg text-center">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-orange-600 mb-1">Orange</label>
+                                <input type="number" id="teamOrange" value="0" min="0" class="w-full p-2 border border-gray-300 rounded-lg text-center">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-blue-600 mb-1">Blue</label>
+                                <input type="number" id="teamBlue" value="0" min="0" class="w-full p-2 border border-gray-300 rounded-lg text-center">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-yellow-600 mb-1">Gold</label>
+                                <input type="number" id="teamGold" value="0" min="0" class="w-full p-2 border border-gray-300 rounded-lg text-center">
+                            </div>
+                        </div>
+                        <button type="button" onclick="analyzeTeam(this)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 flex justify-center items-center gap-2">
+                            <span>Analyze Synergy</span> <span class="text-xl">✨</span>
+                        </button>
+                    </div>
+
+                    <!-- Result Area -->
+                    <div id="synergyResult" class="mt-4 hidden">
+                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Team Report:</h4>
+                            <div id="synergyOutput" class="text-gray-800 prose prose-sm max-w-none"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool 5: Color Roleplay Simulator -->
+                <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-500 to-rose-500"></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-theater-masks mr-2 text-pink-500"></i> Roleplay Simulator
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-4">Practice your pitch or conversation with a simulated personality.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Select Persona to Talk To</label>
+                            <select id="personaColor" class="w-full p-2 border border-gray-300 rounded-lg outline-none">
+                                <option value="Green">Green (The Skeptic/Analyst)</option>
+                                <option value="Orange">Orange (The Action-Taker)</option>
+                                <option value="Blue">Blue (The Empath)</option>
+                                <option value="Gold">Gold (The Traditionalist)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Chat Window -->
+                        <div id="chatHistory" class="h-64 overflow-y-auto bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-2">
+                            <div class="chat-bubble chat-ai">
+                                Hello! Select a persona above and say hi to start practicing.
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <input type="text" id="chatInput" class="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none" placeholder="Type your message..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                            <button type="button" onclick="sendChatMessage()" class="bg-pink-600 hover:bg-pink-700 text-white rounded-lg px-4 transition duration-200">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool 6: Inclusive Meeting Planner -->
+                <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-500 to-blue-600"></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-calendar-check mr-2 text-cyan-600"></i> Inclusive Meeting Planner
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-4">Generate an agenda that keeps ALL personality types engaged.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Meeting Topic</label>
+                            <input type="text" id="meetingTopic" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none" placeholder="e.g., Q3 Marketing Strategy Kickoff">
+                        </div>
+                        <button type="button" onclick="generateAgenda(this)" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 flex justify-center items-center gap-2">
+                            <span>Build Agenda</span> <span class="text-xl">✨</span>
+                        </button>
+                    </div>
+
+                    <!-- Result Area -->
+                    <div id="agendaResult" class="mt-4 hidden">
+                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Inclusive Agenda:</h4>
+                            <div id="agendaOutput" class="text-gray-800 prose prose-sm max-w-none"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool 7: Gift Guru (NEW) -->
+                <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-400 to-pink-500"></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-gift mr-2 text-red-500"></i> Gift Guru
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-4">Find the perfect gift for a colleague based on their True Color.</p>
+
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Personality</label>
+                                <select id="giftColor" class="w-full p-2 border border-gray-300 rounded-lg outline-none">
+                                    <option value="Green">Green</option>
+                                    <option value="Orange">Orange</option>
+                                    <option value="Blue">Blue</option>
+                                    <option value="Gold">Gold</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Budget ($)</label>
+                                <input type="number" id="giftBudget" value="25" class="w-full p-2 border border-gray-300 rounded-lg outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Occasion</label>
+                            <input type="text" id="giftOccasion" class="w-full p-2 border border-gray-300 rounded-lg outline-none" placeholder="e.g., Birthday, Thank You, Promotion">
+                        </div>
+                        <button type="button" onclick="generateGiftIdeas(this)" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200 flex justify-center items-center gap-2">
+                            <span>Find Gifts</span> <span class="text-xl">✨</span>
+                        </button>
+                    </div>
+
+                    <!-- Result Area -->
+                    <div id="giftResult" class="mt-4 hidden">
+                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Gift Ideas:</h4>
+                            <div id="giftOutput" class="text-gray-800 prose prose-sm max-w-none"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <div class="text-center mt-10 text-gray-500 text-sm pb-10">
+            <p>App powered by Google Gemini API • Content based on "Showing Our True Colors"</p>
+        </div>
+    </div>
+
+    <!-- API Key Modal -->
+    <div id="apiKeyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Enter Your Gemini API Key</h3>
+            <p class="text-sm text-gray-500 mb-4">Your key is stored only in your browser's localStorage and is never sent anywhere except directly to the Google Gemini API. <a href="https://aistudio.google.com/apikey" target="_blank" class="text-blue-600 hover:underline">Get a free key here</a>.</p>
+            <input type="password" id="apiKeyInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none mb-4" placeholder="AIzaSy...">
+            <div class="flex gap-3">
+                <button onclick="saveApiKey()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">Save Key</button>
+                <button onclick="clearApiKey()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg transition">Clear</button>
+                <button onclick="document.getElementById('apiKeyModal').classList.add('hidden')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg transition">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic -->
+    <script>
+        // --- API KEY MANAGEMENT (stored in localStorage, never in source code) ---
+        let apiKey = localStorage.getItem('gemini_api_key') || '';
+
+        function showApiKeyPrompt() {
+            const modal = document.getElementById('apiKeyModal');
+            modal.classList.remove('hidden');
+            document.getElementById('apiKeyInput').value = apiKey;
+        }
+
+        function saveApiKey() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            if (key) {
+                apiKey = key;
+                localStorage.setItem('gemini_api_key', key);
+                document.getElementById('apiKeyModal').classList.add('hidden');
+                document.getElementById('apiKeyStatus').textContent = 'API Key: Set ✓';
+                document.getElementById('apiKeyStatus').className = 'text-sm text-green-600 font-medium cursor-pointer hover:underline';
+            }
+        }
+
+        function clearApiKey() {
+            apiKey = '';
+            localStorage.removeItem('gemini_api_key');
+            document.getElementById('apiKeyInput').value = '';
+            document.getElementById('apiKeyStatus').textContent = 'API Key: Not Set — Click to Add';
+            document.getElementById('apiKeyStatus').className = 'text-sm text-red-600 font-medium cursor-pointer hover:underline';
+        }
+
+        window.onload = function() {
+            const statusEl = document.getElementById('apiKeyStatus');
+            if (apiKey) {
+                statusEl.textContent = 'API Key: Set ✓';
+                statusEl.className = 'text-sm text-green-600 font-medium cursor-pointer hover:underline';
+            } else {
+                statusEl.textContent = 'API Key: Not Set — Click to Add';
+                statusEl.className = 'text-sm text-red-600 font-medium cursor-pointer hover:underline';
+            }
+        };
+
+        function renderMarkdown(text) {
+            if (!text) return "No response content.";
+            try {
+                if (typeof marked !== 'undefined' && marked.parse) {
+                    return marked.parse(text);
+                }
+            } catch (e) {
+                console.error("Markdown parsing failed", e);
+            }
+            // Fallback if marked library fails or crashes
+            return text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+        }
+        
+        async function callGemini(prompt) {
+            // Safety check for API Key
+            if (!apiKey) {
+                alert("Please add your Gemini API Key to the code! Look for 'const apiKey' at the bottom of the file.");
+                return "**Error:** API Key is missing. Please add it to the code.";
+            }
+
+            if (!prompt) return null;
+            console.log("Sending request to Gemini...");
+            
+            try {
+                // Exponential backoff retry logic
+                const delays = [1000, 2000, 4000, 8000, 16000];
+                let attempt = 0;
+                let result = null;
+
+                while (attempt <= 5) {
+                    try {
+                        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                contents: [{
+                                    parts: [{
+                                        text: prompt
+                                    }]
+                                }]
+                            })
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        result = await response.json();
+                        break; // Success, exit loop
+                    } catch (e) {
+                        attempt++;
+                        console.warn(`Attempt ${attempt} failed:`, e);
+                        if (attempt > 5) throw e;
+                        await new Promise(resolve => setTimeout(resolve, delays[attempt - 1]));
+                    }
+                }
+
+                console.log("Response received.");
+                return result?.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
+
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                return `**Error:** I encountered an issue connecting to the AI service (Status: ${error.message}). Please check your internet connection or API Key configuration.`;
+            }
+        }
+
+        async function rewriteMessage(btn) {
+            const originalBtnText = btn.innerHTML;
+            
+            try {
+                const targetColor = document.getElementById('targetColor').value;
+                const message = document.getElementById('messageInput').value;
+                const outputDiv = document.getElementById('communicatorOutput');
+                const resultContainer = document.getElementById('communicatorResult');
+                
+                if (!message.trim()) {
+                    alert("Please enter a message first.");
+                    return;
+                }
+
+                btn.innerHTML = '<div class="loader"></div> Processing...';
+                btn.disabled = true;
+                resultContainer.classList.remove('hidden');
+                outputDiv.innerHTML = '<span class="text-gray-400">Thinking...</span>';
+
+                const prompt = `
+                    You are an expert on the 'True Colors' personality system. 
+                    Task: Rewrite the following message to specifically appeal to a person with a "${targetColor}" personality type.
+                    Original Message: "${message}"
+                    Instructions:
+                    1. Identify core values of ${targetColor}.
+                    2. Rewrite message to use resonating vocabulary.
+                    3. Briefly explain why.
+                    Output: **Revised Message:** [Msg] **Why this works:** [Exp]
+                `;
+
+                const response = await callGemini(prompt);
+                outputDiv.innerHTML = renderMarkdown(response);
+            } catch (e) {
+                console.error(e);
+                alert("An unexpected error occurred.");
+            } finally {
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+            }
+        }
+
+        async function resolveConflict(btn) {
+            const originalBtnText = btn.innerHTML;
+            try {
+                const myColor = document.getElementById('myColor').value;
+                const theirColor = document.getElementById('theirColor').value;
+                const situation = document.getElementById('situationInput').value;
+                const outputDiv = document.getElementById('resolverOutput');
+                const resultContainer = document.getElementById('resolverResult');
+                
+                if (!situation.trim()) {
+                    alert("Please describe the situation first.");
+                    return;
+                }
+
+                btn.innerHTML = '<div class="loader"></div> Analyzing...';
+                btn.disabled = true;
+                resultContainer.classList.remove('hidden');
+                outputDiv.innerHTML = '<span class="text-gray-400">Analyzing personalities...</span>';
+
+                const prompt = `
+                    You are an expert Conflict Mediator (True Colors system).
+                    Scenario: Me (${myColor}) vs Them (${theirColor}). Situation: "${situation}"
+                    Task: Provide a 3-step resolution strategy.
+                    1. Explain the "Value Clash".
+                    2. Suggest specific words/actions.
+                    3. Provide a compromise.
+                `;
+
+                const response = await callGemini(prompt);
+                outputDiv.innerHTML = renderMarkdown(response);
+            } catch(e) {
+                console.error(e);
+            } finally {
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+            }
+        }
+
+        async function analyzePersonality(btn) {
+            const originalBtnText = btn.innerHTML;
+            try {
+                const bio = document.getElementById('bioInput').value;
+                const outputDiv = document.getElementById('analysisOutput');
+                const resultContainer = document.getElementById('analysisResult');
+                
+                if (!bio.trim()) {
+                    alert("Please describe yourself first.");
+                    return;
+                }
+
+                btn.innerHTML = '<div class="loader"></div> Analyzing...';
+                btn.disabled = true;
+                resultContainer.classList.remove('hidden');
+                outputDiv.innerHTML = '<span class="text-gray-400">Analyzing patterns...</span>';
+
+                const prompt = `
+                    You are an expert on 'True Colors'. User Description: "${bio}"
+                    Task: Determine which Color fits best.
+                    Output: **Primary Color:** [Color] **Evidence:** [Points] **Quick Tip:** [Work style]
+                `;
+
+                const response = await callGemini(prompt);
+                outputDiv.innerHTML = renderMarkdown(response);
+            } catch(e) {
+                console.error(e);
+            } finally {
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+            }
+        }
+
+        async function analyzeTeam(btn) {
+            const originalBtnText = btn.innerHTML;
+            try {
+                const green = document.getElementById('teamGreen').value;
+                const orange = document.getElementById('teamOrange').value;
+                const blue = document.getElementById('teamBlue').value;
+                const gold = document.getElementById('teamGold').value;
+                const outputDiv = document.getElementById('synergyOutput');
+                const resultContainer = document.getElementById('synergyResult');
+                
+                btn.innerHTML = '<div class="loader"></div> Analyzing Synergy...';
+                btn.disabled = true;
+                resultContainer.classList.remove('hidden');
+                outputDiv.innerHTML = '<span class="text-gray-400">Calculating team dynamics...</span>';
+
+                const prompt = `
+                    Expert Team Consultant (True Colors). Team: Green:${green}, Orange:${orange}, Blue:${blue}, Gold:${gold}.
+                    Report:
+                    1. **Dominant Culture:** Vibe?
+                    2. **Blind Spots:** Missing perspectives?
+                    3. **Management Tip:** Advice for leader.
+                `;
+
+                const response = await callGemini(prompt);
+                outputDiv.innerHTML = renderMarkdown(response);
+            } catch(e) {
+                console.error(e);
+            } finally {
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+            }
+        }
+
+        async function sendChatMessage() {
+            try {
+                const input = document.getElementById('chatInput');
+                const historyDiv = document.getElementById('chatHistory');
+                const persona = document.getElementById('personaColor').value;
+                const userText = input.value.trim();
+
+                if (!userText) return;
+
+                historyDiv.innerHTML += `<div class="chat-bubble chat-user flex justify-end"><span>${userText}</span></div>`;
+                input.value = '';
+                historyDiv.scrollTop = historyDiv.scrollHeight; 
+
+                const loadingId = 'loading-' + Date.now();
+                historyDiv.innerHTML += `<div id="${loadingId}" class="chat-bubble chat-ai"><div class="loader"></div></div>`;
+                historyDiv.scrollTop = historyDiv.scrollHeight;
+
+                const prompt = `
+                    Roleplay as a person with STRONG ${persona} personality (True Colors).
+                    Reply to: "${userText}". Keep it short and in character.
+                `;
+
+                const aiResponse = await callGemini(prompt);
+
+                const loaderDiv = document.getElementById(loadingId);
+                if (loaderDiv) loaderDiv.remove();
+                
+                historyDiv.innerHTML += `<div class="chat-bubble chat-ai"><strong>${persona}:</strong> ${renderMarkdown(aiResponse)}</div>`;
+                historyDiv.scrollTop = historyDiv.scrollHeight;
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        async function generateAgenda(btn) {
+            const originalBtnText = btn.innerHTML;
+            try {
+                const topic = document.getElementById('meetingTopic').value;
+                const outputDiv = document.getElementById('agendaOutput');
+                const resultContainer = document.getElementById('agendaResult');
+                
+                if (!topic.trim()) { alert("Please enter a meeting topic."); return; }
+
+                btn.innerHTML = '<div class="loader"></div> Planning...';
+                btn.disabled = true;
+                resultContainer.classList.remove('hidden');
+                outputDiv.innerHTML = '<span class="text-gray-400">Creating inclusive agenda...</span>';
+
+                const prompt = `
+                    Expert Meeting Facilitator (True Colors). Topic: "${topic}"
+                    Task: Create 4-point agenda, one point appealing to each color (Gold/Green/Blue/Orange).
+                `;
+
+                const response = await callGemini(prompt);
+                outputDiv.innerHTML = renderMarkdown(response);
+            } catch(e) {
+                console.error(e);
+            } finally {
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+            }
+        }
+
+        async function getCardInsight(btn, color, type) {
+            try {
+                const outputDiv = document.getElementById(`${color}-insight`);
+                if(!outputDiv) return;
+                
+                outputDiv.classList.remove('hidden');
+                outputDiv.innerHTML = '<div class="flex items-center gap-2"><div class="loader"></div> <span class="text-xs">Consulting AI...</span></div>';
+
+                const prompt = `
+                    For the True Colors personality type '${color}', list 3 key ${type} (bullet points). 
+                    Keep it extremely brief and actionable. No intro text.
+                `;
+
+                const response = await callGemini(prompt);
+                outputDiv.innerHTML = `<strong>${type}:</strong><br>` + renderMarkdown(response);
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        async function generateGiftIdeas(btn) {
+            const originalBtnText = btn.innerHTML;
+            try {
+                const color = document.getElementById('giftColor').value;
+                const budget = document.getElementById('giftBudget').value;
+                const occasion = document.getElementById('giftOccasion').value;
+                const outputDiv = document.getElementById('giftOutput');
+                const resultContainer = document.getElementById('giftResult');
+                
+                if (!occasion.trim()) { alert("Please enter an occasion."); return; }
+
+                btn.innerHTML = '<div class="loader"></div> Searching...';
+                btn.disabled = true;
+                resultContainer.classList.remove('hidden');
+                outputDiv.innerHTML = '<span class="text-gray-400">Finding perfect gifts...</span>';
+
+                const prompt = `
+                    Suggest 3 specific gift ideas for a colleague with ${color} personality type.
+                    Occasion: ${occasion}. Budget: under $${budget}.
+                    Explain briefly why the ${color} type would like each.
+                `;
+
+                const response = await callGemini(prompt);
+                outputDiv.innerHTML = renderMarkdown(response);
+            } catch(e) {
+                console.error(e);
+            } finally {
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
