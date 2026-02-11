@@ -230,7 +230,6 @@
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold text-gray-800">✨ AI Personality Assistant</h2>
                 <p class="text-gray-600">Apply True Colors to your real life interactions using Gemini AI.</p>
-                <p id="apiKeyStatus" onclick="showApiKeyPrompt()" class="text-sm text-red-600 font-medium cursor-pointer hover:underline mt-2">API Key: Not Set — Click to Add</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -498,60 +497,10 @@
         </div>
     </div>
 
-    <!-- API Key Modal -->
-    <div id="apiKeyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
-            <h3 class="text-xl font-bold text-gray-800 mb-2">Enter Your Gemini API Key</h3>
-            <p class="text-sm text-gray-500 mb-4">Your key is stored only in your browser's localStorage and is never sent anywhere except directly to the Google Gemini API. <a href="https://aistudio.google.com/apikey" target="_blank" class="text-blue-600 hover:underline">Get a free key here</a>.</p>
-            <input type="password" id="apiKeyInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none mb-4" placeholder="AIzaSy...">
-            <div class="flex gap-3">
-                <button onclick="saveApiKey()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">Save Key</button>
-                <button onclick="clearApiKey()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg transition">Clear</button>
-                <button onclick="document.getElementById('apiKeyModal').classList.add('hidden')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg transition">Cancel</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Logic -->
     <script>
-        // --- API KEY MANAGEMENT (stored in localStorage, never in source code) ---
-        let apiKey = localStorage.getItem('gemini_api_key') || '';
-
-        function showApiKeyPrompt() {
-            const modal = document.getElementById('apiKeyModal');
-            modal.classList.remove('hidden');
-            document.getElementById('apiKeyInput').value = apiKey;
-        }
-
-        function saveApiKey() {
-            const key = document.getElementById('apiKeyInput').value.trim();
-            if (key) {
-                apiKey = key;
-                localStorage.setItem('gemini_api_key', key);
-                document.getElementById('apiKeyModal').classList.add('hidden');
-                document.getElementById('apiKeyStatus').textContent = 'API Key: Set ✓';
-                document.getElementById('apiKeyStatus').className = 'text-sm text-green-600 font-medium cursor-pointer hover:underline';
-            }
-        }
-
-        function clearApiKey() {
-            apiKey = '';
-            localStorage.removeItem('gemini_api_key');
-            document.getElementById('apiKeyInput').value = '';
-            document.getElementById('apiKeyStatus').textContent = 'API Key: Not Set — Click to Add';
-            document.getElementById('apiKeyStatus').className = 'text-sm text-red-600 font-medium cursor-pointer hover:underline';
-        }
-
-        window.onload = function() {
-            const statusEl = document.getElementById('apiKeyStatus');
-            if (apiKey) {
-                statusEl.textContent = 'API Key: Set ✓';
-                statusEl.className = 'text-sm text-green-600 font-medium cursor-pointer hover:underline';
-            } else {
-                statusEl.textContent = 'API Key: Not Set — Click to Add';
-                statusEl.className = 'text-sm text-red-600 font-medium cursor-pointer hover:underline';
-            }
-        };
+        // --- API KEY ---
+        const apiKey = "AIzaSyBQDe1SZPI6F0HYOWhkDLzWxY8V2R0zF7E";
 
         function renderMarkdown(text) {
             if (!text) return "No response content.";
