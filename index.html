@@ -56,12 +56,25 @@
 </head>
 <body class="bg-gray-100 font-sans p-4 md:p-8">
 
+    <!-- API Key Modal -->
+    <div id="apiKeyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg max-w-md w-full mx-4 p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Enter Your API Key</h2>
+            <p class="text-sm text-gray-500 mb-4">Paste the Gemini API key you received. It will be saved in your browser so you only need to enter it once.</p>
+            <input type="text" id="apiKeyInput" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none mb-4" placeholder="Paste your Gemini API key here">
+            <button type="button" onclick="saveApiKey()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">Save Key</button>
+        </div>
+    </div>
+
     <div class="max-w-6xl mx-auto">
         
         <!-- Header -->
-        <div class="text-center mb-10">
+        <div class="text-center mb-10 relative">
             <h1 class="text-4xl font-bold text-gray-800 mb-2">True Colors Reference & Tools</h1>
             <p class="text-gray-600 text-lg">Understanding Personality Traits, Needs, and Values</p>
+            <button type="button" onclick="showApiKeyModal()" class="absolute top-0 right-0 text-gray-400 hover:text-purple-600 transition" title="API Key Settings">
+                <i class="fas fa-gear text-xl"></i>
+            </button>
         </div>
 
         <!-- Reference Grid Container -->
@@ -501,7 +514,7 @@
     <script src="config.js"></script>
     <script>
         // --- API KEY ---
-        const apiKey = window.GEMINI_API_KEY || "";
+        let apiKey = localStorage.getItem('gemini_api_key') || window.GEMINI_API_KEY || "";
 
         function renderMarkdown(text) {
             if (!text) return "No response content.";
@@ -519,8 +532,8 @@
         async function callGemini(prompt) {
             // Safety check for API Key
             if (!apiKey) {
-                alert("Please add your Gemini API Key to the code! Look for 'const apiKey' at the bottom of the file.");
-                return "**Error:** API Key is missing. Please add it to the code.";
+                showApiKeyModal();
+                return "**Error:** API Key is missing. Please enter your key using the popup.";
             }
 
             if (!prompt) return null;
@@ -798,6 +811,27 @@
             } catch(e) {
                 console.error(e);
             }
+        }
+
+        function showApiKeyModal() {
+            const modal = document.getElementById('apiKeyModal');
+            const input = document.getElementById('apiKeyInput');
+            input.value = apiKey;
+            modal.classList.remove('hidden');
+        }
+
+        function saveApiKey() {
+            const input = document.getElementById('apiKeyInput');
+            const key = input.value.trim();
+            if (!key) return;
+            localStorage.setItem('gemini_api_key', key);
+            apiKey = key;
+            document.getElementById('apiKeyModal').classList.add('hidden');
+        }
+
+        // Auto-show modal if no key is configured
+        if (!apiKey) {
+            showApiKeyModal();
         }
 
         async function generateGiftIdeas(btn) {
