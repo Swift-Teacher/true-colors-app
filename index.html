@@ -498,9 +498,10 @@
     </div>
 
     <!-- Logic -->
+    <script src="config.js"></script>
     <script>
         // --- API KEY ---
-        const apiKey = "AIzaSyCnjRVWk_H3GiBXYf0bxjXF9Da8DK4yZ1A";
+        const apiKey = window.GEMINI_API_KEY || "";
 
         function renderMarkdown(text) {
             if (!text) return "No response content.";
@@ -720,7 +721,12 @@
 
                 if (!userText) return;
 
-                historyDiv.innerHTML += `<div class="chat-bubble chat-user flex justify-end"><span>${userText}</span></div>`;
+                const userBubble = document.createElement('div');
+                userBubble.className = 'chat-bubble chat-user flex justify-end';
+                const userSpan = document.createElement('span');
+                userSpan.textContent = userText;
+                userBubble.appendChild(userSpan);
+                historyDiv.appendChild(userBubble);
                 input.value = '';
                 historyDiv.scrollTop = historyDiv.scrollHeight; 
 
